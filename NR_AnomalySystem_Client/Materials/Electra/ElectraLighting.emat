@@ -1,0 +1,11 @@
+Particle {
+ AlbedoMap "{9708F0A25E1227C6}NR_AnomalySystem_Client/Materials/Electra/ElectraFlickers_co.edds" 
+ Emissive 1 1 1 0
+ CastShadow 1
+ ReceiveShadow 1
+ AlphaTest 0
+ BlendMode Additive_AlphaModulate
+ TileU 2
+ TileV 2
+ CameraBlendFar 0.001
+}

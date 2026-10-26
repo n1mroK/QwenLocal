@@ -1,0 +1,33 @@
+EffectDef {
+ Emitors {
+  EmitorDef lightning2 {
+   ShapeType Sphere
+   ShapeSize 4.5 0 4.5
+   ConeAngle 0 0 0
+   MaxNum 128
+   BirthRate 86
+   BirthRateRND 64
+   Offset 0 1 0
+   Material "{4D6418E0447DDD51}NR_AnomalySystem_Client/Materials/Electra/ElectraActive.emat"
+   SizeMultiplier 0.5
+   SizeRND 0.5
+   RandomAngle 1
+   Velocity 0
+   VelAffect 0
+   Spring 0
+   AnimFPS 12
+   LifeTime 1
+   Color {
+    0 1 1 1 0.7895 1 1 1 1 1 1 1
+   }
+   Alpha {
+    0 1 0.39881 1 0.59957 0 1 0
+   }
+   EffectTime 3
+   Repeat 0
+   BRateMast {
+    0 1 0.2344 1 0.28269 0 1 0
+   }
+  }
+ }
+}
