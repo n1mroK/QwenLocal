@@ -31,9 +31,11 @@
                     "SectionName": "#production",
                     "SectionLines": [
                         "Dan Olthen",
+						"Emma Vos",
                         "Filippo Franco",
                         "Ľuboš Kubiš",
                         "Martin Kuchař",
+						"Ondřej Klíma",
                         "Roman Múdry",
                         "Tim Pulsmeier"
                     ]
@@ -60,7 +62,8 @@
                     "SectionName": "#lead_designer",
                     "SectionLines": [
                         "Tomáš Pulkrábek",
-                        "Peter Nespešný"
+                        "Peter Nespešný",
+						"Özgür Nergis"
                     ]
                 }
             ]
@@ -73,7 +76,8 @@
                     "SectionLines": [
                         "Alberto Paparella",
                         "Arthur Joanin",
-			"Jan Pazdera",
+						"Daan Eijkhout",
+						"Jan Pazdera",
                         "Jan Tomášik",
                         "Jana Unzeitigová",
                         "Marek Žilavý",
@@ -81,7 +85,6 @@
                         "Martin Strnad",
                         "Michal Břinda",
                         "Ondřej Malota",
-                        "Özgür Nergis",
                         "Tomáš Pavlík"
                     ]
                 }
@@ -132,14 +135,17 @@
                         "Arseniy Smirnov",
                         "Florian Pelloux",
                         "Ivan Buchta",
+						"Jacques Bellamy",
                         "Kasy Hucková",
+						"Kateřina Szerudová",
                         "Mark Gill",
                         "Martin Hochman",
                         "Martin Pezlar",
                         "Michael Docherty",
-			"Nejc Kokalj",
+						"Nejc Kokalj",
                         "Petr Sedláček",
                         "Radim Vitek",
+						"Ramiro Nicolás Gil",
                         "Suvi Lankila"
                     ]
                 }
@@ -151,7 +157,8 @@
                 {
                     "SectionName": "#lead_programmers",
                     "SectionLines": [
-                        "Lukáš Jagelka",
+					    "Aleš Stupka",
+						"Lukáš Jagelka",
                         "Martin Slavkov",
                         "Mikuláš Florek",
                         "Miroslav Maněna",
@@ -168,11 +175,10 @@
                     "SectionLines": [
                         "Adrian Turcanu",
                         "Aleš Renner",
-                        "Aleš Stupka",
-			"Denis Sion",
+						"Denis Sion",
                         "Eduard Pribula",
                         "Elias Mittet Hernes",
-			"Filip Vondrášek",
+						"Filip Vondrášek",
                         "Floris Leysen",
                         "František Bidlo",
                         "Jacob Kumar",
@@ -189,6 +195,7 @@
                         "Mojmír Svoboda",
                         "Ondrej Ritomský",
                         "Patrik Kalabus",
+						"Pedro Bentes",
                         "Peter Uličiansky",
                         "Peter Ševčík",
                         "Petr Soviš",
@@ -220,6 +227,7 @@
                 {
                     "SectionName": "#art_lead",
                     "SectionLines": [
+						"Alexander Szaloki", 
                         "Michal Ištok"
                     ]
                 }
@@ -231,8 +239,7 @@
                 {
                     "SectionName": "#artists",
                     "SectionLines": [
-                        "Alexander Szaloki", 
-			"Art Shiryaev",
+						"Art Shiryaev",
                         "Boris Joanovič",
                         "Bruno Luccas",
                         "Darko Miladinovikj",
@@ -240,9 +247,11 @@
                         "Jamie Foster",
                         "Jan Kudrnáč",
                         "José Luis Revuelta",
-			"Jose Pellegrino",
+						"Jose Pellegrino",
                         "Kristýna Duhárová",
-			"Manuel J. Gallardo",
+						"Lenka Hlubinková",
+						"Lilo Schrage",
+						"Manuel J. Gallardo",
                         "Marcin Pindara",
                         "Marián Ferko",
                         "Mario Kurty",
@@ -258,11 +267,12 @@
                         "Peter Blažej",
                         "Peter Rendoš",
                         "Peter Švaral",
-			"Philipp Körber",
+						"Philipp Körber",
                         "Roman Gašperík",
-			"Saba Goschadze",
+						"Saba Goschadze",
                         "Sebastian Davies",
-			"Terézia Mičková",
+						"Sofiia Diordiichuk",
+						"Terézia Mičková",
                         "Vaclav Rod",
                         "Vadim Spiridonov",
                         "Vladimír Holík",
@@ -398,7 +408,8 @@
                 {
                     "SectionName": "#quality_assurance_lead",
                     "SectionLines": [
-                        "Eszter Barabás",
+					    "Dominik Novák",
+						"Eszter Barabás",
                         "Filip Konupka"
                     ]
                 }
@@ -411,15 +422,18 @@
                     "SectionName": "#quality_assurance_specialists",
                     "SectionLines": [
                         "Bogdan Ciobanu",
-			"Daniel Fialka",
-                        "Dominik Novák",
+						"Daniel Fialka",
                         "Erik Vrškový",
                         "Jan Jirák",
                         "Ketrin Bitomská",
                         "Kristina Kirichenko",
+						"Marie Hilal",
+						"Martin Bugel",
                         "Martin Polma",
-			"Moritz Ehmcke",
+						"Moritz Ehmcke",
                         "Ondřej Klíma",
+						"Petr Hušek",
+						"Petr Madara",
                         "Rastislav Kluka"
                     ]
                 }
@@ -609,10 +623,11 @@
                 {
                     "SectionName": "#brand_and_pr_management_team",
                     "SectionLines": [
-                        "Jakub Vamberský",
+						"Eszter Barabás",
+						"Htun Lynn Zaw",
+						"Jakub Vamberský",
                         "Jitka Vysloužilová",
                         "Karolina Havelkova",
-                        "Htun Lynn Zaw",
                         "Mark O'Keeffe",
                         "Miguel Raimundo",
                         "Michael Christensen",
@@ -698,7 +713,10 @@
                 {
                     "SectionName": "#platform_support_specialists",
                     "SectionLines": [
-                        "Kristýna Valíková",
+                        "Jakub Pufler",
+						"Kristýna Valíková",
+						"Martin Batel'",
+						"Martin Šalling",
 						"Richard Kužidlo",
                         "Patrik Šedivý"
                     ]
@@ -749,13 +767,15 @@
                         "Sara Cascianelli",
                         "Andrea Luciano Damico",
                         "Liu Dasheng",
+						"Thomas Faust",
                         "Rafael Galhardi",
+						"Astarion He",
                         "Thiago Hilger",
                         "Lincoln Hui",
                         "Bartosz Klofik",
                         "Dmitry Kornyukhov",
+						"Martin Kořenek",
                         "Joanna Kinga Král",
-                        "Martin Kořenek",
                         "Goulven Le Goff",
                         "Doris Liang",
                         "Scott Liang",
@@ -768,18 +788,21 @@
                         "Jiří Petrů",
                         "Marco Piccinnu",
                         "Aya Pickard",
+						"Alba Calvo Porrúa",
                         "Cristina Righi",
                         "Raphaël Rouby",
                         "Igor Savenkov",
+						"Ronan Shang",
                         "Vojtěch Schubert",
                         "Carmen Simio",
                         "Mathilde Sperduto",
+						"Mattie Su",
                         "Suzu Suzunomiya",
                         "Felix Tappe",
                         "Rumi Tasaki",
                         "Loek van Kooten",
-                        "Tobiáš Zíka",
                         "Will Zheng",
+						"Tobiáš Zíka",
                         "Aleksandra Zrebiec"
 
                     ]
@@ -824,11 +847,14 @@
                         "Adam Vondra",
                         "Adéla Větrovcová",
                         "Akkharapoom Saranupan",
+						"Alexandra Navarová",
                         "Alisa Chomrit",
+						"Anna Anzuli",
                         "Aneta Laudová",
                         "Aneta Steimarová",
                         "Anna Švecová",
                         "Anna Wrnatová",
+						"Antonín Beneš",
                         "Antonín Karoch",
                         "Antonio Janeček",
                         "Artchawin Khempila",
@@ -858,12 +884,15 @@
                         "Jakub Lietavec",
                         "Jakub Šíma",
                         "Jan Doležal",
+						"Jan Foltýn",
                         "Jan Kaleta",
                         "Jan Kočur",
                         "Jan Parma",
+						"Jan Skrzeczek",
                         "Jan Švihálek",
                         "Jan Uher",
                         "Jan Voldřich",
+						"Jana Klimešová",
                         "Jana Michailidu",
                         "Jana Vorlíčková",
                         "Jaroslav Hlaváč",
@@ -886,30 +915,30 @@
                         "Lalisa Leakakul",
                         "Le Do",
                         "Lucie Svobodová",
-			"Lukáš Jaro",
-			"Marek Hvizdoš",
+						"Lukáš Jaro",
+						"Marek Abbod",
+						"Marek Hvizdoš",
                         "Marek Vítek",
-                        "Marie Pazourová",
                         "Marta Hlinková",
                         "Martin Bílek",
-                        "Martin Bugel",
                         "Martin Dettelbacher",
                         "Martin Juráš",
                         "Martin Mayer",
                         "Martin Mokrejš",
-			"Martin Pivon",
+						"Martin Pivon",
                         "Martin Suriak",
                         "Matěj Müller",
                         "Matěj Potůček",
-			"Matouš Hrdlicka",
+						"Matouš Hrdlicka",
                         "Matyáš Soviš",
+						"Matyáš Vráblík",
                         "Max Hejtmánek",
                         "Michal Jandura",
                         "Michal Kolman",
                         "Michal Měřinský",
                         "Michal Rychetník",
                         "Michal Skramuský",
-			"Miroslav Kovář",
+						"Miroslav Kovář",
                         "Nuthapon Pudpaput",
                         "Oldřich Kalous",
                         "Ondřej Borz",
@@ -918,7 +947,7 @@
                         "Ondřej Vanča",
                         "Pankaj Singh",
                         "Patrik Bartošík",
-			"Pavel Fronek",
+						"Pavel Fronek",
                         "Pavel Hamata",
                         "Pavol Sočuvka",
                         "Pavel Štaud",
@@ -926,11 +955,11 @@
                         "Peter Šoltés",
                         "Petr Hlaváč",
                         "Petr Juklíček",
-                        "Petr Madara",
                         "Petr Schiebel",
                         "Petr Secký",
                         "Petr Vlach",
                         "Petra Kočí",
+						"Petra Skulová",
                         "Pinatee Panichauttra",
                         "Pitsanu Jittamart",
                         "Raffaele Galbani",
@@ -946,10 +975,11 @@
                         "Soňa Cicoňová",
                         "Stanislav Zolotuchin",
                         "Štěpán Riedl",
-			"Štěpán Šach",
+						"Štěpán Šach",
                         "Štěpán Šikýř",
                         "Tadeáš Varga",
                         "Teo Kryštůfek",
+						"Tereza Matušková",
                         "Tomáš Herout",
                         "Tomáš Jelínek",
                         "Tomáš Jeřábek",
@@ -964,6 +994,7 @@
                         "Vít Jašek",
                         "Vladimír Krejčík",
                         "Vladimír Pech",
+						"Vojtěch Hájek",
                         "Vojtěch Matouš",
                         "Vojtěch Neoral",
                         "Vojtěch Ondrůj",
@@ -1161,13 +1192,140 @@
                 }
             ]
         },
+		{
+            "DepartmentName": "Virtuos Global",
+            "Sections": [
+                {
+                    "SectionName": "#ceo",
+                    "SectionLines": [
+                        "Gilles Langourieux"
+                    ]
+                },
+                {
+                    "SectionName": "#business_development_director",
+                    "SectionLines": [
+                        "Matthieu Cheynut"
+                    ]
+                },
+                {
+                    "SectionName": "#business_development_manager",
+                    "SectionLines": [
+                        "Samantha Tran"
+                    ]
+                },
+                {
+                    "SectionName": "#engineering_business_unit_director",
+                    "SectionLines": [
+                        "Marios Michaelides"
+                    ]
+                },
+                {
+                    "SectionName": "#account_manager",
+                    "SectionLines": [
+                        "Alina Obukhovska"
+                    ]
+                }
+            ]
+        },
+		{
+            "DepartmentName": "Virtuos Labs Prague",
+            "Sections": [
+                {
+                    "SectionName": "#studio_general_manager",
+                    "SectionLines": [
+                        "Jan Herodes"
+                    ]
+                },
+                {
+                    "SectionName": "#production_director",
+                    "SectionLines": [
+                        "Patrik Starý"
+                    ]
+                },
+                {
+                    "SectionName": "#head_of_technology",
+                    "SectionLines": [
+                        "Otakar Nieder"
+                    ]
+                },
+                {
+                    "SectionName": "#hr_manager",
+                    "SectionLines": [
+                        "Martin Svoboda"
+                    ]
+                },
+                {
+                    "SectionName": "#hr_business_partner",
+                    "SectionLines": [
+                        "David Janák"
+                    ]
+                },
+                {
+                    "SectionName": "#office_manager",
+                    "SectionLines": [
+                        "Katarína Petrášková"
+                    ]
+                },
+                {
+                    "SectionName": "#it_system_admin",
+                    "SectionLines": [
+                        "Milan Dolejš"
+                    ]
+                },
+                {
+                    "SectionName": "#game_producer",
+                    "SectionLines": [
+                        "Hana Vranák Řiháčková",
+                        "Jakub Začal"
+                    ]
+                },
+                {
+                    "SectionName": "#senior_software_engineer",
+                    "SectionLines": [
+                        "Vojtěch Cimbura",
+ 						"Lukáš Štrůdl",
+                        "Michal Hvězda",
+                        "Matúš Sabol",
+                        "Michal Skalský"
+                    ]
+                },
+                {
+                    "SectionName": "#software_engineer",
+                    "SectionLines": [
+                        "Filip Sedlák",
+ 						"Miroslav Valach",
+                        "Lucie Veverková",
+                        "Petr Kotáb"
+                     ]
+                },
+                {
+                    "SectionName": "#ux_designer",
+                    "SectionLines": [
+                        "Domen Repnik"
+                    ]
+                },
+                {
+                    "SectionName": "#qa_lead",
+                    "SectionLines": [
+                        "Lukáš Nič"
+                    ]
+                },
+                {
+                    "SectionName": "#qa",
+                    "SectionLines": [
+                        "Jakub Kratochvíl",
+                        "Šimon Pčola"
+                    ]
+                }
+            ]
+        },
         {
             "DepartmentName": "#legal_notices",
             "Sections": [
                 {
                     "SectionName": "NVIDIA GameWorks",
                     "SectionLines": [
-                        "© 2007- 2016 NVIDIA Corporation. All rights reserved."
+                        "© 2007- 2016 NVIDIA Corporation. All rights reserved."
                     ]
                 },
                 {
@@ -1259,6 +1417,39 @@
                     "SectionName": "Images",
                     "SectionLines": [
                         "'The Milky Way panorama' by ESO/S.Brunier used under the  CC BY 4.0 license (https://creativecommons.org/licenses/by/4.0/) / Adapted for in-game usage."
+                    ]
+                },
+                {
+                    "SectionName": "Vulkan Memory Allocator",
+                    "SectionLines": [
+                        "Copyright (c) 2017-2026 Advanced Micro Devices, Inc. All rights reserved."
+                    ]
+                },
+                {
+                    "SectionName": "volk",
+                    "SectionLines": [
+                        "Meta-loader for Vulkan",
+                        "Copyright (c) 2018-2026 Arseny Kapoulkine"
+                    ]
+                },
+                {
+                    "SectionName": "sse2neon",
+                    "SectionLines": [
+                        "Helper to convert Intel SSE intrinsics to Arm/Aarch64 NEON intrinsics.",
+                        "Copyright (c) 2015-2026 SSE2NEON Contributors"
+                    ]
+                },
+                {
+                    "SectionName": "SPIRV-Reflect",
+                    "SectionLines": [
+                        "C/C++ reflection API for SPIR-V shader bytecode in Vulkan.",
+                        "Copyright (c) 2017-2018 Google Inc."
+                    ]
+                },
+                {
+                    "SectionName": "NVIDIA RTX DLSS SDK",
+                    "SectionLines": [
+                        "Copyright (c) 2018-2026 NVIDIA Coorporation"
                     ]
                 }
             ]

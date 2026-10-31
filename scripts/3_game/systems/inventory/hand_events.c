@@ -97,7 +97,7 @@ class HandEventBase
 		//! Do not check for action validity on remotes or when performing through juncture. 
 		//! Juncture locks guarentee the item is safe to interact with and the server has validated the command at this point. 
 		//! Checking at this point is both wasteful and can result in a failure which leads to desync
-		if (validation.m_IsRemote || validation.m_IsJuncture)
+		if (validation.m_IsRemote)
 			return true;
 		
 		return CheckRequest();
@@ -196,7 +196,7 @@ class HandEventBase
 	void ClearInventoryReservation()
 	{
 		InventoryLocation il = GetDst();
-		if (il)
+		if (!il)
 		{
 			il = GetSrc();
 		}
@@ -237,11 +237,6 @@ class HandEventTake extends HandEventBase
 	
 	override bool CanPerformEventEx(InventoryValidation validation)
 	{
-		if (validation.m_IsJuncture)
-		{
-			return true;
-		}
-		
 		if (!GameInventory.LocationCanMoveEntity(GetSrc(), GetDst()))
 		{
 			#ifdef ENABLE_LOGGING
@@ -682,7 +677,18 @@ class HandEventSwap extends HandEventBase
 
 	override bool AcquireInventoryJunctureFromServer (notnull Man player)
 	{
-		return TryAcquireTwoInventoryJuncturesFromServer(player, m_Src, m_Src2, m_Dst, m_Dst2);
+		InventoryLocation src1 = GetSrc();
+		InventoryLocation src2 = GetSecondSrc();
+		InventoryLocation dst1 = GetDst();
+		InventoryLocation dst2 = GetSecondDst();
+
+		if (src1 && dst1 && src2 && dst2)
+		{
+			return TryAcquireTwoInventoryJuncturesFromServer(player, src1, src2, dst1, dst2);
+		}
+
+		Error("[hndfsm] HandEventSwap. AcquireInventoryJunctureFromServer: no src or dst for ev=" + DumpToString());
+		return JunctureRequestResult.ERROR;
 	}
 
 	override string DumpToString ()

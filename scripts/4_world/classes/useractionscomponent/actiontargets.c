@@ -33,14 +33,18 @@ class VicinityObjects
 	//! transform simple array of Objects to VicinityObjects hashmap
 	void TransformToVicinityObjects(array<Object> objects)
 	{
-		for (int i = 0; i < objects.Count(); i++)
+		foreach (Object obj : objects)
 		{
-			if (objects[i].GetType() != "" && objects[i].CanBeActionTarget())
+			if (IsValidVicinityObject(obj))
 			{
-				StoreVicinityObject(objects[i]);
-				//Print("storing, 2nd pass: " + objects[i]);
+				StoreVicinityObject(obj);
 			}
 		}
+	}
+	
+	protected bool IsValidVicinityObject(notnull Object obj)
+	{
+		return obj.CanBeActionTarget();
 	}
 	
 	void ClearVicinityObjects()
@@ -49,9 +53,9 @@ class VicinityObjects
 	}
 
 	//! return simple array of Objects in Vicinity
-	array< Object > GetVicinityObjects()
+	array<Object> GetVicinityObjects()
 	{
-		ref array<Object> vicinityObjects = new array<Object>;
+		array<Object> vicinityObjects = new array<Object>();
 		for (int i = 0; i < m_VicinityObjects.Count(); i++)
 		{
 			//! filters out non-takeable items (won't be shown in vicinity)
@@ -66,9 +70,9 @@ class VicinityObjects
 	}
 	
 	//! return simple array of Objects in Vicinity
-	array< Object > GetRawVicinityObjects()
+	array<Object> GetRawVicinityObjects()
 	{
-		ref array<Object> vicinityObjects = new array<Object>;
+		array<Object> vicinityObjects = new array<Object>();
 		for (int i = 0; i < m_VicinityObjects.Count(); i++)
 		{
 			vicinityObjects.Insert(GetObject(i));
@@ -110,20 +114,40 @@ class VicinityObjects
 
 class ActionTarget
 {
-	void ActionTarget(Object object, Object parent, int componentIndex, vector cursorHitPos, float utility)
+	private Object m_Object;		// object itself
+	private Object m_Parent;		// null or parent of m_Object
+	private int m_ComponentIndex;		// p3d Component ID or -1
+	private vector m_CursorHitPos;
+	private float m_Utility;
+	private string m_SurfaceName;
+	private int m_SurfaceLiquidType = LIQUID_NONE;
+	
+	void ActionTarget(Object object, Object parent, int componentIndex, vector cursorHitPos, float utility, string surfaceName = "")
 	{
 		m_Object = object;
 		m_Parent = parent;
 		m_ComponentIndex = componentIndex;
 		m_CursorHitPos = cursorHitPos;
 		m_Utility = utility;
-	} 
+				
+		m_SurfaceName = surfaceName;
+		if (m_SurfaceName != "")
+		{
+			SurfaceInfo surfaceInfo = SurfaceInfo.GetByFile(surfaceName);
+			if (surfaceInfo && surfaceInfo.GetLiquidType() != LIQUID_NONE)
+				m_SurfaceLiquidType = surfaceInfo.GetLiquidType();
+		}
+	}
 
 	Object GetObject()
-		{ return m_Object; }
+	{
+		return m_Object;
+	}
 
 	Object GetParent()
-		{ return m_Parent; }
+	{ 
+		return m_Parent; 
+	}
 
 	bool IsProxy()
 	{
@@ -133,17 +157,33 @@ class ActionTarget
 	}
 	
 	int GetComponentIndex()	
-		{ return m_ComponentIndex; }
+	{ 
+		return m_ComponentIndex;
+	}
 	
 	float GetUtility()
-		{ return m_Utility; }
+	{
+		 return m_Utility;
+	}
 	
 	vector GetCursorHitPos()
-		{ return m_CursorHitPos; }
+	{
+		 return m_CursorHitPos; 
+	}
 	
 	void SetCursorHitPos(vector cursor_position)
 	{
 		m_CursorHitPos = cursor_position;
+	}
+	
+	string GetSurfaceName()
+	{
+		return m_SurfaceName;
+	}
+		
+	int GetSurfaceLiquidType()
+	{
+		return m_SurfaceLiquidType;
 	}
 	
 	void DbgPrintTargetDump()
@@ -162,16 +202,12 @@ class ActionTarget
 		res = res + "}";
 		return res;
 	}
-	
-	private Object m_Object;		// object itself
-	private Object m_Parent;		// null or parent of m_Object
-	private int m_ComponentIndex;	// p3d Component ID or -1
-	private vector m_CursorHitPos;
-	private float m_Utility;
 };
 
 class ActionTargets
 {
+	private ref map<int, ref array<RaycastRVResult>> m_SortedResults = new map<int, ref array<RaycastRVResult>>();
+	
 	void ActionTargets(PlayerBase player)
 	{
 		m_Player = player;
@@ -189,22 +225,20 @@ class ActionTargets
 	void Clear()
 	{
 		m_Targets.Clear();
+		m_SortedResults.Clear();
+		m_HitPos = vector.Zero;
 	}
 	
 	void Update()
-	{	
-		int i;
-		
+	{
 		//! clear state
 		m_VicinityObjects.ClearVicinityObjects();
 		Clear();
 
-		Object cursorTarget = null;
-		EntityAI cursorTargetEntity = null;
+		Object firstValidRaycastedObject = null;
 		array<Object> vicinityObjects = new array<Object>;
 		
 		//! camera & ray properties
-		int hitComponentIndex;
 		vector playerPos = m_Player.GetPosition();
 		vector headingDirection = MiscGameplayFunctions.GetHeadingVector(m_Player);
 
@@ -214,72 +248,76 @@ class ActionTargets
 		RaycastRVParams rayInput = new RaycastRVParams(m_RayStart, m_RayEnd, m_Player);
 		rayInput.flags = CollisionFlags.ALLOBJECTS;
 		//rayInput.sorted = true;
-		array<ref RaycastRVResult> results = new array<ref RaycastRVResult>;
-
-		if ( DayZPhysics.RaycastRVProxy(rayInput, results) )
+		array<ref RaycastRVResult> results = new array<ref RaycastRVResult>();
+		array<RaycastRVResult> sortedValidRaycastResults = new array<RaycastRVResult>();
+		map<Object, RaycastRVResult> resultMap = new map<Object, RaycastRVResult>();
+		
+		if (DayZPhysics.RaycastRVProxy(rayInput, results))
 		{
-			if ( results.Count() > 0 )
+			array<int> sortedDistanceHelper = SortResultsDistance(results);
+			int sortedResultsCount = m_SortedResults.Count();
+			if (sortedResultsCount > 0 )
 			{
-				array<float> distance_helper = new array<float>;
-				array<float> distance_helper_unsorted = new array<float>;
-				float distance;
-				
-				for (i = 0; i < results.Count(); i++)
+				foreach (int sortedDist : sortedDistanceHelper) //distances already sorted
 				{
-					distance = vector.DistanceSq(results[i].pos, m_RayStart);
-					distance_helper.Insert(distance);
-					//Print("#" + i + " " + results.Get(i).obj);
-				}
-				//Print("--------------");
-				distance_helper_unsorted.Copy(distance_helper);
-				distance_helper.Sort();
-				
-				RaycastRVResult res;
-				
-				
-				for ( i = 0; i < results.Count(); i++)
-				{
-					res = results.Get(distance_helper_unsorted.Find(distance_helper[i])); //closest object
+					array<RaycastRVResult> sameDistResults = m_SortedResults.Get(sortedDist);
 					
-					cursorTarget = res.obj;
-					Class.CastTo(cursorTargetEntity,cursorTarget);
-					if (cursorTarget && !cursorTarget.CanBeActionTarget())
-						continue;
-					//! if the cursor target is a proxy
-					if ( res.hierLevel > 0 )
+					foreach (RaycastRVResult res : sameDistResults)
 					{
-						//! ignores attachments on player
-						if ( !res.parent.IsMan() )
+						if (res.obj && !res.obj.CanBeActionTarget())
+							continue;
+						
+						//! if the cursor target is a proxy
+						if (res.hierLevel > 0)
 						{
-							m_VicinityObjects.StoreVicinityObject(res.obj, res.parent);
-							//Print("storing, 1st pass (hier > 0): " + res.obj);
+							//! ignores attachments on player and objects with invalid IDs
+							if (res.parent.IsMan() || (res.obj.GetID() < 1 && !IsRaycastResultException(res)))
+								continue;
+						}
+						
+						sortedValidRaycastResults.Insert(res);
+						resultMap.Insert(res.obj, res);
+						if (!firstValidRaycastedObject)
+							firstValidRaycastedObject = res.obj;
+						
+						if (m_HitPos == vector.Zero)
+							m_HitPos = res.pos;
+						
+						if (res.surface && res.surface.GetSurfaceType() != "")
+						{
+							m_SurfaceInfo = res.surface;
 						}
 						else
-							continue;
+						{
+							//! Need to do this surface detection here as the current RaycastRVResult might not contain the correct surface info
+							SurfaceDetectionParameters surfaceParams = new SurfaceDetectionParameters();
+							surfaceParams.type = SurfaceDetectionType.Roadway;
+							surfaceParams.position = m_HitPos;
+							surfaceParams.includeWater = true;
+							surfaceParams.syncMode = UseObjectsMode.NoWait;
+							surfaceParams.rsd = RoadSurfaceDetection.ABOVE;
+							
+							//! Check current surface player is looking at
+							SurfaceDetectionResult surfaceResult = new SurfaceDetectionResult();
+							if (g_Game.GetSurface(surfaceParams, surfaceResult))
+							{
+								if (surfaceResult && surfaceResult.surface)
+								{
+									m_SurfaceInfo = surfaceResult.surface;
+								}
+							}
+						}
+						break;
 					}
-					else
-					{
-						m_VicinityObjects.StoreVicinityObject(res.obj, null);
-						//Print("storing, 1st pass: " + res.obj);
-					}
-					
-					m_HitPos = res.pos;
-					hitComponentIndex = res.component;
-					break;
 				}
 			}
-			//else
-				//Print("NO RESULTS FOUND!");
 		}
 		else
 		{
-			//Print("CAST UNSUCCESFUL");
-			cursorTarget = null;
+			firstValidRaycastedObject = null;
 			m_HitPos = vector.Zero;
-			hitComponentIndex = -1;
+			m_SurfaceInfo = null;
 		}
-		
-		//Print(cursorTarget);
 		
 		//! spacial search
 		DayZPlayerCamera camera = m_Player.GetCurrentCamera();
@@ -288,32 +326,48 @@ class ActionTargets
 		
 		//! removes player from the vicinity
 		vicinityObjects.RemoveItem(m_Player);
+		
+		FilterDuplicateVicinityObjects(vicinityObjects, sortedValidRaycastResults);
 
 		//! transformation of array of Objects to hashmap (VicinityObjects)
-		//Print("m_VicinityObjects before" + m_VicinityObjects.Count());
 		m_VicinityObjects.TransformToVicinityObjects(vicinityObjects);
-		//Print("m_VicinityObjects after" + m_VicinityObjects.Count());
 		
 		//! removes Vicinity objects that are not directly visible from player position
-		FilterObstructedObjectsEx(cursorTarget, vicinityObjects);
+		FilterObstructedObjectsEx(firstValidRaycastedObject, vicinityObjects);
 		
 		//! select & sort targets based on utility function
-		for ( i = 0; i < m_VicinityObjects.Count(); i++ )
+		int vicinityObjCount = m_VicinityObjects.Count();
+		for (int i = 0; i < vicinityObjCount; ++i)
 		{
 			Object object = m_VicinityObjects.GetObject(i);
-			Object parent = m_VicinityObjects.GetParent(i);
-
-			float utility = ComputeUtility(object, m_RayStart, m_RayEnd, cursorTarget, m_HitPos);
-			if ( utility > 0 )
+			Object parent;
+			RaycastRVResult result;
+			int targetComponent;
+			vector hitpos;
+			//proper raycast results will use their own data
+			if (resultMap.Find(object, result))
 			{
-				int targetComponent = -1;
-				targetComponent = hitComponentIndex;
+				parent = result.parent;
+				hitpos = result.pos;
+				targetComponent = result.component;
+			}
+			else
+			{
+				parent = m_VicinityObjects.GetParent(i);
+				hitpos = m_HitPos; //substitute raycast hitpos as reference for the utility check
+				targetComponent = -1; //invalid component
+			}
+			
+			float utility = ComputeUtility(object, m_RayStart, m_RayEnd, firstValidRaycastedObject, hitpos);
+			if (utility > 0)
+			{
+				string surfaceName;
+				if (m_SurfaceInfo && m_SurfaceInfo.GetEntryName() != "")
+					surfaceName = m_SurfaceInfo.GetEntryName();
 
-				ActionTarget at = new ActionTarget(object, parent, targetComponent, m_HitPos, utility);
+				ActionTarget at = new ActionTarget(object, parent, targetComponent, m_HitPos, utility, surfaceName);
 				StoreTarget(at);
 			}
-			/*else
-				Print("utility < 0; object: " + object + " | parent: " + parent);*/
 		}
 
 		//! action target for surface actions (lowest utility)
@@ -351,7 +405,37 @@ class ActionTargets
 			DrawSelectionPos(false);
 		}
 #endif
-		//Print("--------------");
+	}
+	
+	//! Initial raycast filtering exceptions (can't ask the entity type, sadly)
+	protected bool IsRaycastResultException(RaycastRVResult res)
+	{
+		if (TentBase.Cast(res.parent))
+			return true;
+		
+		return false;
+	}
+	
+	//distance sorting, returns sorted unique distance tiers as ints (float*1000)
+	protected array<int> SortResultsDistance(array<ref RaycastRVResult> results)
+	{
+		array<int> distHelper = new array<int>();
+		foreach (RaycastRVResult res : results)
+		{
+			int distance = (int)(vector.DistanceSq(res.pos, m_RayStart) * 1000);
+			array<RaycastRVResult> arr = m_SortedResults.Get(distance);
+			if (!arr)
+				arr = new array<RaycastRVResult>();
+			
+			arr.Insert(res);
+			m_SortedResults.Set(distance, arr);
+			
+			if (distHelper.Find(distance) == -1)
+				distHelper.Insert(distance);
+		}
+		
+		distHelper.Sort();
+		return distHelper;
 	}
 	
 	private bool IsObstructed(Object object)
@@ -362,7 +446,7 @@ class ActionTargets
 	
 	private bool IsObstructedEx(Object object, IsObjectObstructedCache cache)
 	{
-		return MiscGameplayFunctions.IsObjectObstructedEx(object, cache);
+		return MiscGameplayFunctions.IsObjectObstructedEx(object, cache, false, "0 0 0", 10);
 	}
  	
 	//! returns count of founded targets
@@ -411,39 +495,46 @@ class ActionTargets
 
 		if (pTarget)
 		{
-			if ( pTarget == cursorTarget )
+			if (pTarget == cursorTarget)
 			{
 				//! ground and static objects
-				if ( pTarget.GetType() == string.Empty )
+				if (pTarget.GetType() == string.Empty)
 					return 0.01;
+				
+				if (pTarget.IsTree() || pTarget.IsBush())
+					return 0.1;
 
-				if ( pTarget.IsBuilding() )
+				if (pTarget.IsBuilding())
 					return 0.25;
 
-				if ( pTarget.IsTransport() )
+				if (pTarget.IsTransport())
 					return 0.25;
 				
 				//!basebuilding objects
 				if (pTarget.CanUseConstruction())
 					return 0.85;
 
-				if ( pTarget.IsWell() )
+				if (pTarget.IsWell())
 					return 0.9;
-
+				
 				vector playerPosXZ = m_Player.GetPosition();
 				vector hitPosXZ = hitPos;
 				playerPosXZ[1] = 0;
 				hitPosXZ[1] = 0;
-				if ( vector.DistanceSq(playerPosXZ, hitPosXZ) <= c_MaxTargetDistance * c_MaxTargetDistance )
+				if (vector.DistanceSq(playerPosXZ, hitPosXZ) <= c_MaxTargetDistance * c_MaxTargetDistance)
 					return c_UtilityMaxValue;
 			}
-
+			
 			if ( PlayerBase.Cast(pTarget) && PlayerBase.Cast(pTarget).IsInVehicle() ) // utility in vehicle should be below base vehicle val
 				return 0.20;
 			
 			float distSqr = DistSqrPoint2Line(pTarget.GetPosition(), pRayStart, pRayEnd);
-			return (c_UtilityMaxDistFromRaySqr - distSqr) / c_UtilityMaxDistFromRaySqr;
+			return ((c_UtilityMaxDistFromRaySqr - distSqr) / c_UtilityMaxDistFromRaySqr) * c_UtilityValueCoef;
 		}
+		
+		//! surfaces with liquid source
+		if (m_SurfaceInfo && m_SurfaceInfo.GetLiquidType() != LIQUID_NONE)
+			return 0.01;
 
 		return -1;
 	}
@@ -463,6 +554,26 @@ class ActionTargets
 		float b = c1 / c2;	
 		vector nearestPoint = pL1 + (v * b);
 		return vector.DistanceSq(pPoint, nearestPoint);		
+	}
+	
+	private void FilterDuplicateVicinityObjects(inout array<Object> vicinityObjectsOutput, array<RaycastRVResult> sortedRaycastResults)
+	{
+		//remove duplicates
+		array<Object> tmp = new array<Object>();
+		tmp.Copy(vicinityObjectsOutput);
+		vicinityObjectsOutput.Clear();
+		foreach (Object obj : tmp)
+		{
+			if (obj && vicinityObjectsOutput.Find(obj) == -1)
+				vicinityObjectsOutput.Insert(obj);
+		}
+		
+		//next append the raycast result objects
+		foreach (RaycastRVResult raycastResult : sortedRaycastResults)
+		{
+			if (raycastResult.obj && vicinityObjectsOutput.Find(raycastResult.obj) == -1)
+				vicinityObjectsOutput.Insert(raycastResult.obj);
+		}
 	}
 	
 	private void FilterObstructedObjectsEx(Object cursor_target, array<Object> vicinityObjects)
@@ -721,7 +832,9 @@ class ActionTargets
 	
 	private vector m_RayStart;
 	private vector m_RayEnd;
-	private vector m_HitPos;
+	private vector m_HitPos; //!first valid hitpos! Used only as rough reference value for conecasted results.
+	
+	private SurfaceInfo m_SurfaceInfo;
 	
 	//--------------------------------------------------------
 	// Constants
@@ -737,7 +850,8 @@ class ActionTargets
 	
 	//! utility constants
 	private const float c_UtilityMaxValue = 10000;
-	private const float c_UtilityMaxDistFromRaySqr = 0.8 * 0.8;
+	private const float c_UtilityMaxDistFromRaySqr = 0.65 * 0.65;
+	private const float c_UtilityValueCoef = 0.35;
 
 	//! p3d 
 	private const string CE_CENTER 					= "ce_center";

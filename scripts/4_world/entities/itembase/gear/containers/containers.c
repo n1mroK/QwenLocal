@@ -67,6 +67,7 @@ class PlateCarrierPouches_Black extends PlateCarrierPouches {};
 class PlateCarrierPouches_Camo extends PlateCarrierPouches {};
 class PlateCarrierPouches_Green extends PlateCarrierPouches {};
 class PlateCarrierPouches_Winter extends PlateCarrierPouches {};
+class PlateCarrierPouches_Desert : PlateCarrierPouches {};
 
 class Refrigerator : WorldContainer_Base {};
 class RefrigeratorMinsk : WorldContainer_Base {};
@@ -79,3 +80,28 @@ class SmallProtectorCase : Container_Base
 }
 
 class TrashCan : WorldContainer_Base {};
+class NBCPack_ColorBase : Container_Base 
+{
+	override bool CanDisplayAttachmentCargo(EntityAI attachment)
+	{
+		return false;
+	}
+	
+	override bool CanReceiveAttachment(EntityAI attachment, int slotId)
+	{
+		if ( !super.CanReceiveAttachment(attachment, slotId) )
+			return false;
+		
+		GameInventory attachmentInv = attachment.GetInventory();
+		if (attachmentInv && attachmentInv.GetCargo() && attachmentInv.GetCargo().GetItemCount() > 0)
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+};
+class NBCPack_Grey : NBCPack_ColorBase {};
+class NBCPack_White : NBCPack_ColorBase {};
+class NBCPack_Yellow : NBCPack_ColorBase {};

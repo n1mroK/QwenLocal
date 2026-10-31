@@ -1,7 +1,0 @@
-Particle {
- AlbedoMap "{2ABC1CE904D56621}NR_AnomalySystem_Client/Materials/Electra/ElectraActive_co.edds" 
- Emissive 1 1 1 0
- BlendMode Additive_AlphaModulate
- TileU 2
- TileV 2
-}

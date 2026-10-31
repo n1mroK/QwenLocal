@@ -28,16 +28,6 @@ class ServerBrowserFavoritesTabConsolePages extends ServerBrowserTabConsolePages
 		m_TotalLoadedServers = favIds.Count();
 		super.OnLoadServersAsyncFinished();
 		SetFocusServers();
-		
-		int totalVisibleEntries = 0;
-		foreach(string serverID, ServerBrowserEntry entry: m_EntryWidgets)
-		{
-			if (entry.GetRoot().IsVisible())
-				totalVisibleEntries++;
-		}
-		
-		if (GetTabType() == TabType.FAVORITE && totalVisibleEntries == 0)
-			GetGame().GetCallQueue(CALL_CATEGORY_GUI).Call(m_Menu.SwitchToOfficalTab);
 	}
 	
 	protected override void LoadEntries(int cur_page_index , GetServersResultRowArray page_entries)
@@ -130,11 +120,19 @@ class ServerBrowserFavoritesTabConsolePages extends ServerBrowserTabConsolePages
 		OnlineServices.LoadServers(m_CurrentFilterInput);
 	}
 	
+#ifdef DIAG_DEVELOPER
+	override void RefreshServerList(bool forcePageChange = false)
+#else
 	override void RefreshServerList()
+#endif
 	{
 		super.RefreshServerList();
 
+	#ifdef DIAG_DEVELOPER
+		if (m_IsFavoriteChanged || forcePageChange)
+	#else
 		if (m_IsFavoriteChanged)
+	#endif
 		{
 			SetCurrentPage(1);
 			m_IsFavoriteChanged = false;

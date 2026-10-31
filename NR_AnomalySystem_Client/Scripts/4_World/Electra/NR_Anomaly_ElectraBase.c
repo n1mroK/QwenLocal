@@ -1,1 +1,0 @@
-class NR_Anomaly_ElectraBase extends House {};

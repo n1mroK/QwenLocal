@@ -1,6 +1,19 @@
 
 bool TryAcquireInventoryJunctureFromServer (notnull Man player, notnull InventoryLocation src, notnull InventoryLocation dst)
 {
+	#ifdef ENABLE_LOGGING
+	if ( LogManager.IsInventoryReservationLogEnable() )
+	{
+		Debug.InventoryReservationLog("STS = " + player.GetSimulationTimeStamp() + " src:" + src.DumpToString() + " dst: " + dst.DumpToString(), "InventoryJuncture" , "n/a", "TryAcquireInventoryJunctureFromServer",player.ToString() );	
+	}
+	#endif
+	
+	if (!src.GetItem())
+	{
+		if (LogManager.IsSyncLogEnable()) syncDebugPrint("[syncinv] missing src item, junction cannot be tested, player=" + Object.GetDebugName(player) + " STS = " + player.GetSimulationTimeStamp() + " src=" + InventoryLocation.DumpToStringNullSafe(src));
+		return JunctureRequestResult.ERROR;
+	}
+	
 	if (player.NeedInventoryJunctureFromServer(src.GetItem(), src.GetParent(), dst.GetParent()))
 	{
 		if ( ( src.GetItem() && src.GetItem().IsSetForDeletion() ) || ( src.GetParent() && src.GetParent().IsSetForDeletion() ) || ( dst.GetParent() && dst.GetParent().IsSetForDeletion() ) )
@@ -50,6 +63,18 @@ bool TryAcquireTwoInventoryJuncturesFromServer (notnull Man player, notnull Inve
 	EntityAI dstParent1 = dst1.GetParent();
 	EntityAI dstParent2 = dst2.GetParent();
 	
+	if (!srcItem1)
+	{
+		if (LogManager.IsSyncLogEnable()) syncDebugPrint("[syncinv] missing src1 item1, junction cannot be tested, player=" + Object.GetDebugName(player) + " STS = " + player.GetSimulationTimeStamp() + " src1=" + InventoryLocation.DumpToStringNullSafe(src1));
+		return JunctureRequestResult.ERROR;
+	}
+	
+	if (!srcItem2)
+	{
+		if (LogManager.IsSyncLogEnable()) syncDebugPrint("[syncinv] missing src1 item2, junction cannot be tested, player=" + Object.GetDebugName(player) + " STS = " + player.GetSimulationTimeStamp() + " src2=" + InventoryLocation.DumpToStringNullSafe(src2));
+		return JunctureRequestResult.ERROR;
+	}
+	
 	
 	bool need_j1 = player.NeedInventoryJunctureFromServer(srcItem1, srcParent1, dstParent1);
 	bool need_j2 = player.NeedInventoryJunctureFromServer(srcItem2, srcParent2, dstParent2);
@@ -93,6 +118,10 @@ bool TryAcquireTwoInventoryJuncturesFromServer (notnull Man player, notnull Inve
 			
 			if (srcItem2 && !srcItem2.CanPutIntoHands(player))
 			{
+				if (need_j1)
+				{
+					g_Game.ClearJunctureEx(player, srcItem1); // release already acquired juncture for item1
+				}
 				return JunctureRequestResult.JUNCTURE_DENIED;
 			}
 			

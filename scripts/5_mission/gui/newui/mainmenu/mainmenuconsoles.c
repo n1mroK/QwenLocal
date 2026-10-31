@@ -90,7 +90,7 @@ class MainMenuConsole extends UIScriptedMenu
 		CheckWidth();
 
 		#ifdef ENABLE_CAROUSEL
-		m_NewsCarousel = new NewsCarousel(m_NewsCarouselFrame, this);
+		RefreshNewsCarousel();
 		#else
 		m_NewsCarousel = null;
 		#endif
@@ -102,8 +102,10 @@ class MainMenuConsole extends UIScriptedMenu
 		}
 		
 		OnInputDeviceChanged(g_Game.GetInput().GetCurrentInputDevice());
-		
-		g_Game.GetContentDLCService().m_OnChange.Insert(OnDLCChange);
+
+		g_Game.SetLoadState(DayZLoadState.MAIN_MENU_CONTROLLER_SELECT);
+		MainMenuData.SubscribeDLCUpdate();
+		MainMenuData.GetOnDLCChangedSI().Insert(OnDLCChange);
 
 		#ifdef PLATFORM_MSSTORE
 		// Enable exit button
@@ -111,16 +113,14 @@ class MainMenuConsole extends UIScriptedMenu
 		#endif
 		
 		#ifdef PLATFORM_CONSOLE
-		#ifndef PLATFORM_PS4
-		#ifdef PLATFORM_MSSTORE
-		m_ChangeAccount.Show(false);
-		#else
-		m_ChangeAccount.Show(GetGame().GetInput().IsEnabledMouseAndKeyboard());
-		#endif
-		m_FeedbackQRCode.LoadImageFile(0, "gui/textures/feedback_qr_xbox.edds");
-		#else
-		m_FeedbackQRCode.LoadImageFile(0, "gui/textures/feedback_qr_ps.edds");
-		#endif
+		m_FeedbackQRCode.LoadImageFile(0, "gui/textures/feedback_qr.edds");
+			#ifndef PLATFORM_PS4
+				#ifdef PLATFORM_MSSTORE
+				m_ChangeAccount.Show(false);
+				#else
+				m_ChangeAccount.Show(GetGame().GetInput().IsEnabledMouseAndKeyboard());
+				#endif
+			#endif
 		#endif
 		
 		#ifdef PLATFORM_CONSOLE
@@ -146,22 +146,16 @@ class MainMenuConsole extends UIScriptedMenu
 			g_Game.GetMission().GetOnInputDeviceChanged().Remove(OnInputDeviceChanged);
 		}
 		
-		if (g_Game.GetContentDLCService())
-			g_Game.GetContentDLCService().m_OnChange.Remove(OnDLCChange);
+		MainMenuData.GetOnDLCChangedSI().Remove(OnDLCChange);
+		MainMenuData.UnsubscribeDLCUpdate();
 	}
 	
-	void OnDLCChange(EDLCId dlcId)
+	void OnDLCChange()
 	{
-		MainMenuData.ClearAllDLCs();
-		LoadMods();
+		UpdateControlsElements();
 		
 		#ifdef ENABLE_CAROUSEL
-		if (m_NewsCarousel)
-		{
-			m_NewsCarousel.Destroy();
-			m_NewsCarousel = null;
-			m_NewsCarousel = new NewsCarousel(m_NewsCarouselFrame, this);
-		}
+		RefreshNewsCarousel();
 		#endif
 	}
 	
@@ -170,6 +164,19 @@ class MainMenuConsole extends UIScriptedMenu
 		MainMenuData.LoadMods();	
 		UpdateControlsElements();
 	}
+	
+	#ifdef ENABLE_CAROUSEL
+	protected void RefreshNewsCarousel()
+	{
+		if (m_NewsCarousel)
+		{
+			m_NewsCarousel.Destroy();
+			m_NewsCarousel = null;
+		}
+		
+		m_NewsCarousel = new NewsCarousel(m_NewsCarouselFrame, this);
+	}
+	#endif
 	
 	protected void OnInputPresetChanged()
 	{
@@ -402,6 +409,10 @@ class MainMenuConsole extends UIScriptedMenu
 		LoadMods();
 		Refresh();
 		
+		#ifdef ENABLE_CAROUSEL
+		RefreshNewsCarousel();
+		#endif
+		
 		if (m_ScenePC && m_ScenePC.GetIntroCamera())
 		{
 			m_ScenePC.GetIntroCamera().LookAt(m_ScenePC.GetIntroCharacter().GetPosition() + Vector(0, 1, 0));
@@ -467,25 +478,26 @@ class MainMenuConsole extends UIScriptedMenu
 		}
 		
 		#ifdef ENABLE_CAROUSEL
-		if (m_NewsCarousel)
+		int articleCount = m_NewsCarousel.GetArticleCount();
+		if (m_NewsCarousel && m_NewsCarousel.IsVisible() && articleCount > 0)
 		{
 			if (GetUApi().GetInputByID(UAUICtrlX).LocalHold())
 			{
 				m_NewsCarousel.ShowPromotion();
 			}
 			
-			if (GetUApi().GetInputByID(UAUIPadRight).LocalPress())
+			if (articleCount > 1)
 			{
-				m_NewsCarousel.OnClickNextArticle();
+				if (GetUApi().GetInputByID(UAUIPadRight).LocalPress())
+					m_NewsCarousel.OnClickNextArticle();
+				
+				if (GetUApi().GetInputByID(UAUIPadLeft).LocalPress())
+					m_NewsCarousel.OnClickPreviousArticle();
 			}
-			
-			if (GetUApi().GetInputByID(UAUIPadLeft).LocalPress())
-			{
-				m_NewsCarousel.OnClickPreviousArticle();
-			}
-			
-			m_NewsCarousel.Update(timeslice);
 		}
+		
+		if (m_NewsCarousel)
+			m_NewsCarousel.Update(timeslice);   // animation update must keep running
 		#endif
 	}
 	
@@ -744,12 +756,7 @@ class MainMenuConsole extends UIScriptedMenu
 		{
 			m_WidthType = widthType;
 			#ifdef ENABLE_CAROUSEL
-			if (m_NewsCarousel)
-			{
-				m_NewsCarousel.Destroy();
-				m_NewsCarousel = null;
-				m_NewsCarousel = new NewsCarousel(m_NewsCarouselFrame, this);
-			}
+			RefreshNewsCarousel();
 			#endif
 		}
 	}

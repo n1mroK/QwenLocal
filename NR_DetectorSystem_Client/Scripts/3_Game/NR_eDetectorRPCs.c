@@ -1,4 +1,0 @@
-enum NR_eDetectorRPCs {
-    RPC_DETECTOR_SIGNAL = 20012403,
-    RPC_ARTIFACT_SPAWN
-}
